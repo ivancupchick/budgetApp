@@ -1,3 +1,13 @@
+var config = {
+  apiKey: "AIzaSyAStTmmewzO4u-q56OxQWPF6_KrmpWqJQQ",
+  authDomain: "educationbudgetform.firebaseapp.com",
+  databaseURL: "https://educationbudgetform.firebaseio.com",
+  projectId: "educationbudgetform",
+  storageBucket: "educationbudgetform.appspot.com",
+  messagingSenderId: "455387477343"
+};
+firebase.initializeApp(config);
+
 function getId(id) {
   return document.getElementById(id);
 }
@@ -36,6 +46,15 @@ function deleteExpenseFunction(self, element, setValues) {
   })
   self.itemList = tempList;
   self.showBalance();
+
+  let tempItemList = self.itemOfObjectsList.filter( (item) => {
+    return item.id !== id;
+  })
+
+  self.itemOfObjectsList = tempItemList;
+  let db = firebase.database();
+  let database = db.ref('All');
+  database.set(self.itemOfObjectsList);
 }
 
 class UI {
@@ -54,6 +73,7 @@ class UI {
     this.expenseList = getId("expense-list");
     this.itemList = [];
     this.itemID = 0;
+    this.itemOfObjectsList = [];
   }
 
   // set Budget
@@ -102,10 +122,39 @@ class UI {
         amount: amount
       }
 
+      this.itemOfObjectsList.push(expense);
+      // function sending data to firebase
+
+      let db = firebase.database();
+      let database = db.ref('All');
+      database.set(this.itemOfObjectsList);
+
       this.itemID++;
       this.itemList.push(expense);
       this.addExpense(expense);
       this.showBalance();
+    }
+  }
+
+  showAllExpense() {
+    let db = firebase.database();
+    let database = db.ref('All');
+    database.once('value', (content) => {
+      if (!content) {
+        return;
+      }
+      if (content.val()) {
+        this.itemOfObjectsList = ( content.val() );
+      }
+      for (let expense of this.itemOfObjectsList) {
+        this.itemID++;
+        this.itemList.push(expense);
+        this.addExpense(expense);
+        this.showBalance();
+      }
+    })
+    if (this.itemOfObjectsList.length == 0) {
+      return;
     }
   }
 
@@ -162,6 +211,8 @@ function eventListenters() {
   let expenseList = getId('expense-list');
 
   let ui = new UI();
+
+  ui.showAllExpense();
 
   budgetForm.addEventListener('submit', (event) => {
     event.preventDefault();
