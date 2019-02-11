@@ -74,6 +74,7 @@ class UI {
     this.itemList = [];
     this.itemID = 0;
     this.itemOfObjectsList = [];
+    this.totalBalance = 0;
   }
 
   // set Budget
@@ -85,7 +86,14 @@ class UI {
       this.budgetAmount.textContent = value;
       this.budgetInput.value = '';
       this.showBalance();
+      // firebase
+      this.totalBalance = value;
+      let db = firebase.database();
+      let database = db.ref('budget');
+      database.set(value);
     }
+
+    
   }
 
   showBalance() {
@@ -122,12 +130,12 @@ class UI {
         amount: amount
       }
 
+      // start firebase
       this.itemOfObjectsList.push(expense);
-      // function sending data to firebase
-
       let db = firebase.database();
       let database = db.ref('All');
       database.set(this.itemOfObjectsList);
+      // end firebase
 
       this.itemID++;
       this.itemList.push(expense);
@@ -135,14 +143,11 @@ class UI {
       this.showBalance();
     }
   }
-
+  // work with Firebase
   showAllExpense() {
-    let db = firebase.database();
-    let database = db.ref('All');
-    database.once('value', (content) => {
-      if (!content) {
-        return;
-      }
+    let count = 0;
+    // get Expenses
+    firebase.database().ref('All').once('value', (content) => {
       if (content.val()) {
         this.itemOfObjectsList = ( content.val() );
       }
@@ -152,10 +157,28 @@ class UI {
         this.addExpense(expense);
         this.showBalance();
       }
+      
+      if (count == 1) {
+        getId('load').style.display = 'none';
+      } else {
+        count++;
+      }
     })
-    if (this.itemOfObjectsList.length == 0) {
-      return;
-    }
+    // get Budget
+    firebase.database().ref('budget').once('value', (content) => {
+      if (content.val()) {
+        this.totalBalance = ( content.val() );
+      }
+
+      this.budgetAmount.textContent = this.totalBalance;
+      this.showBalance();
+
+      if (count == 1) {
+        getId('load').style.display = 'none';
+      } else {
+        count++;
+      }
+    })
   }
 
   addExpense(expense) {

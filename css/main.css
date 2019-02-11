@@ -6,6 +6,70 @@
   --mainBlue: #05668d;
 }
 
+#load {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.backgroundLoad {
+  color: var(--mainWhite);
+  font-size: 100px;
+  height: 30%;
+  width: 30%;
+  border-radius: 20px;
+  opacity: 0.5;
+  background: var(--mainBlue) ;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rotate {
+  -webkit-animation-name: cog;
+  -webkit-animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  -moz-animation-name: cog;
+  -moz-animation-duration: 2s;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+   -ms-animation-name: cog;
+  -ms-animation-duration: 2s;
+  -ms-animation-iteration-count: infinite;
+  -ms-animation-timing-function: linear;
+ 
+  animation-name: cog;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+@-ms-keyframes cog {
+  from { -ms-transform: rotate(0deg); }
+  to { -ms-transform: rotate(360deg); }
+}
+@-moz-keyframes cog {
+  from { -moz-transform: rotate(0deg); }
+  to { -moz-transform: rotate(360deg); }
+}
+@-webkit-keyframes cog {
+  from { -webkit-transform: rotate(0deg); }
+  to { -webkit-transform: rotate(360deg); }
+}
+@keyframes cog {
+  from {
+    transform:rotate(0deg);
+  }
+  to {
+    transform:rotate(360deg);
+  }
+}
+
 body {
   background: var(--mainWhite);
   color: var(--mainDark);
