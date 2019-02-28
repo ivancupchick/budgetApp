@@ -1,4 +1,4 @@
-var config = {
+const config = {
   apiKey: "AIzaSyAStTmmewzO4u-q56OxQWPF6_KrmpWqJQQ",
   authDomain: "educationbudgetform.firebaseapp.com",
   databaseURL: "https://educationbudgetform.firebaseio.com",
@@ -6,22 +6,23 @@ var config = {
   storageBucket: "educationbudgetform.appspot.com",
   messagingSenderId: "455387477343"
 };
+
 firebase.initializeApp(config);
 
-function getId(id) {
+function getById(id) {
   return document.getElementById(id);
 }
 
-function getCSS(css) {
+function getByClass(css) {
   return document.querySelector(css);
 }
 
-function createElem(tag) {
+function createElement(tag) {
   return document.createElement(tag);
 }
 
-function showFeedback(text, parent) {
-  let p = createElem('p');
+function showErrorMessage(text, parent) {
+  let p = createElement('p');
   p.textContent = text;
 
   parent.classList.add('showItem');
@@ -59,18 +60,18 @@ function deleteExpenseFunction(self, element, setValues) {
 
 class UI {
   constructor() {
-    this.budgetFeedback = getCSS(".budget-feedback");
-    this.expenseFeedback = getCSS(".expense-feedback");
-    this.budgetForm = getId("budget-form");
-    this.budgetInput = getId("budget-input");
-    this.budgetAmount = getId("budget-amount");
-    this.expenseAmount = getId("expense-amount");
-    this.balance = getId("balance");
-    this.balanceAmount = getId("balance-amount");
-    this.expenseForm = getId("expense-form");
-    this.expenseInput = getId("expense-input");
-    this.amountInput = getId("amount-input");
-    this.expenseList = getId("expense-list");
+    this.budgetFeedback = getByClass(".budget-feedback");
+    this.expenseFeedback = getByClass(".expense-feedback");
+    this.budgetForm = getById("budget-form");
+    this.budgetInput = getById("budget-input");
+    this.budgetAmount = getById("budget-amount");
+    this.expenseAmount = getById("expense-amount");
+    this.balance = getById("balance");
+    this.balanceAmount = getById("balance-amount");
+    this.expenseForm = getById("expense-form");
+    this.expenseInput = getById("expense-input");
+    this.amountInput = getById("amount-input");
+    this.expenseList = getById("expense-list");
     this.itemList = [];
     this.itemID = 0;
     this.itemOfObjectsList = [];
@@ -81,7 +82,7 @@ class UI {
   submitBudgetForm() {
     let value = this.budgetInput.value;
     if (value == '' || value < 0) {
-      showFeedback('value cannot be empty or negative', this.budgetFeedback);
+      showErrorMessage('value cannot be empty or negative', this.budgetFeedback);
     } else {
       this.budgetAmount.textContent = value;
       this.budgetInput.value = '';
@@ -92,8 +93,6 @@ class UI {
       let database = db.ref('budget');
       database.set(value);
     }
-
-    
   }
 
   showBalance() {
@@ -118,7 +117,7 @@ class UI {
     let expenseValue = this.expenseInput.value;
     let amountValue = this.amountInput.value;
     if (expenseValue == '' || amountValue == '' || amountValue < 0) {
-      showFeedback('value cannot be empty or negative', this.expenseFeedback);
+      showErrorMessage('value cannot be empty or negative', this.expenseFeedback);
     } else {
       let amount = parseInt(amountValue);
       this.expenseInput.value = '';
@@ -130,12 +129,10 @@ class UI {
         amount: amount
       }
 
-      // start firebase
       this.itemOfObjectsList.push(expense);
       let db = firebase.database();
       let database = db.ref('All');
       database.set(this.itemOfObjectsList);
-      // end firebase
 
       this.itemID++;
       this.itemList.push(expense);
@@ -143,6 +140,7 @@ class UI {
       this.showBalance();
     }
   }
+
   // work with Firebase
   showAllExpense() {
     let count = 0;
@@ -159,7 +157,7 @@ class UI {
       }
       
       if (count == 1) {
-        getId('load').style.display = 'none';
+        getById('load').style.display = 'none';
       } else {
         count++;
       }
@@ -174,7 +172,7 @@ class UI {
       this.showBalance();
 
       if (count == 1) {
-        getId('load').style.display = 'none';
+        getById('load').style.display = 'none';
       } else {
         count++;
       }
@@ -182,7 +180,7 @@ class UI {
   }
 
   addExpense(expense) {
-    let div = document.createElement('div');
+    let div = createElement('div');
     div.classList.add('expense');
     div.innerHTML = `
       <div class="expense-item d-flex justify-content-between align-items-baseline">
@@ -228,10 +226,10 @@ class UI {
   }
 }
 
-function eventListenters() {
-  let budgetForm = getId('budget-form');
-  let expenseForm = getId('expense-form');
-  let expenseList = getId('expense-list');
+function createEventListenters() {
+  let budgetForm = getById('budget-form');
+  let expenseForm = getById('expense-form');
+  let expenseList = getById('expense-list');
 
   let ui = new UI();
 
@@ -257,5 +255,5 @@ function eventListenters() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  eventListenters();
+  createEventListenters();
 })
